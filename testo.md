@@ -133,7 +133,7 @@ AWS fornisce il servizio API Gateway, la quale si occupa sostanzialmente di rice
 
 Quando una chiamata riesce a passare API Gateway, viene invocata e caricata in memoria una funzione lambda che si occuperà dell'elaborazione. Successivamente, la funzione può rimanere in cache fino a 5 minuti, per poi essere ibernata se non riceve più richieste.
 
-![api-folder](images/api-folder.png)
+<!-- ![api-folder](images/api-folder.png) -->
 
 _struttura della cartella_
 
@@ -158,7 +158,7 @@ provider:
 Serverless è un framework che permette scrivere un'applicazione secondo il paradigma serverless e si occupa di impacchettare il codice ed inviarlo al provider, permettendoci di fatto di scrivere il programma in locale, testarlo e pubblicarlo in automatico.
 
 ```bash
-# avviare il web server locale
+#avviare il web server locale
 sls offline start --skipCacheInvalidation
 
 #credenziali provider
@@ -188,3 +188,81 @@ Dove:
 - events sono gli eventi che attivano la funzione, specificando l'url relativo, il metodo e l'attivazione di _cors_.
 
 > _cors_ : "Cross-Origin Resource Sharing", un header HTTP che specifica quali domini di origine di una richiesta hanno la possibilità di effettuare richieste. Senza abilitare il cors solo le pagine appartenenti allo stesso dominio possono effettuare richieste HTTP.
+
+Sintassi si base di una funzione lambda:
+
+```javascript
+module.exports.handler = async (event, context) => {
+	//permette alla funzione di terminare anche se processi come la    connessione al database sono ancora in piedi
+	context.callbackWaitsForEmptyEventLoop = false;
+
+	//logica
+};
+```
+
+> _event, context_ : event contiene informazioni riguardo all'invocatore(url, richiesta HTTP...), context contiene informazioni riguardo all'ambiente di esecuzione.
+
+Tutte le funzioni lambda create a parte _register_ e _login_ sono protette da una funzione di autorizzazione, la quale si occupa di verificare che nell'intestazione sia presente il campo _Authorization_ contenente un token _JWT_. Il token JWT viene creato e spedito al client ogniqualvolta l'utente effettua correttamente il login, cioé autenticandosi. Successivamente solo i possessori del token hanno l'autorizzazione per ottenere risorse dagli altri endpoint HTTP.
+
+> _JWT_ : standard sicuro e compatto per verificare autorizzazioni o scambiare informazioni basato su tre campi: Header(algoritmo usato), Payload(informazioni), Secret(firma). Header e Payload vengono convertiti in formato Base64URL e con l'algoritmo di codifica specificato(che può essere anche a chiave asimmetrica) viene generata una firma, il campo Secret, usando una chiave segreta nota solo ad uno degli interlocutori. I tre campi ottenuti vengono poi concatenati separandoli con un "." sono così pronti per l'invio.
+
+Come provider per il database è stato scelto MongoDB Atlas, che offre il servizio DBaaS con un piano gratuito.
+
+Per connettere il database alla server API si è utilizzato la libreria [mongooseJs](https://mongoosejs.com/)(tutti i package si trovano nel file packages.json), la quale offre un elevato grado di astrazione per effettuare operazioni su DB.
+
+Per connettersi al database:
+
+```javascript
+const mongoose = require("mongoose");
+require("dotenv").config();
+
+//variabile booleana per determinare lo stato della connessione, in quanto può essere stata messa in cache(e quindi non vogliamo riconnetterci)
+let isConnected;
+
+module.exports = connectToDB = async () => {
+  if (isConnected) {
+    //se già connessa dà l'ok
+    return Promise.resolve;
+  }
+  //avvio nuova connessione
+  const db = await mongoose.connect(process.env.DB_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  isConnected = db.connections[0].readyState;
+};
+
+});
+```
+
+> process.end.DB_URL : è una variabile di sistema che non è presente nel codice del programma perché contiene informazioni sensibili : lo username e la password dell'account MongoDB Atlas. Per crearla si inserisce in un file denominato ".env" il nome della variabile="valore della variabile"
+
+Mongoose funziona attraverso gli schemi(Schema), che non sono altro che le collezioni di MongoDB nei quali sono specificate le caratteristiche dei singoli documenti.
+Nel presente progetto sono inclusi nella cartella _models_.
+Un esempio di Schema per un account utente:
+
+```javascript
+const UserSchema = new mongoose.Schema({
+	username: String,
+	password: String,
+});
+
+module.exports = mongoose.model("User", UserSchema);
+```
+
+Dopo aver definito gli schemi sarà possibile effettuare query attraverso di loro, ecco alcuni esempi:
+
+```javascript
+//ottenere tutti gli oggetti dalla collezione Collection:
+let collections = await Collection.find();
+
+//creare un nuovo oggetto di tipo Collection e salvarlo nella corrispondente collezione
+let collection = new Collection({
+	name: name,
+	count: 0,
+});
+await collection.save();
+
+//eliminare un oggetto Collection in base all'id
+await Collection.findByIdAndRemove(event.pathParameters.id);
+```

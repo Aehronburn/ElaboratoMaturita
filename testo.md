@@ -22,11 +22,11 @@ Per l'esame di stato è stato scelto di approfondire gli argomenti riguardanti:
 - architettura client-server di livello 3
 - virtualizzazione.
 
-A tal proposito è stato realizzato un progetto consistente in una webapp serverless che implementa gli argomenti prima elencati finalizzata alla gestione delle faccende ed impegni familiari da sbrigare.
+A tal proposito è stato realizzato un progetto consistente in una webapp che implementa gli argomenti prima elencati finalizzata alla gestione delle faccende ed impegni familiari da sbrigare.
 
 I vari task possono essere raccolti e organizzati in collezioni divise per categoria e sono mostrati in una tabella, da cui l'utente può crearne di nuovi, segnarne l'adempimento od eliminarlo.
 
-Tutti i dati sono salvati in cloud, inoltre i task salvati mostrano anche l'orario di creazione e l'utente.
+Tutti i dati sono salvati in cloud, inoltre i task creati mostrano anche l'orario di creazione e l'utente.
 
 La riservatezza delle informazioni è garantita da un sistema di autenticazione e autorizzazione basata su password cifrate.
 
@@ -90,10 +90,101 @@ Il motivo della scelta è dovuto alla semplicità di programmazione, in quanto u
 Lo schema non fisso inoltre garantisce flessibilità e scalabilità nel futuro.
 Infine, siccome i dati non sono normalizzati, le prestazioni sono migliori che nei RDBMS in quanto quest'ultimi normalmente necessitano di effettuare ed attendere l'operazione JOIN tra le tabelle per ottenere il risultato richiesto, a scapito di eventuali ridondanze.
 
+<!-- ![database-schema](images/database-schema.png) -->
+
+### User interface design
+
+<!-- ![uizard](images/uizard.png) -->
+
+Si è iniziati con la progettazione dell'interfaccia utente disegnando i primi wireframe su carta, successivamente grazie a [uizard](https://uizard.io/) si è potuto prototipare una prima idea del progetto.
+
+La fase di prototipazione è essenziale per lo sviluppo di un software dotato di interfaccia utente perchè permette innanzitutto di decidere anzitempo la struttura della UI, invitare altre persone a valutarne la bontà, per poi in fase di programmazione avere un riferimento sicuro su cui basarsi.
+
 ---
 
 ## Implementazione
 
-- User Interface
-- Rest API
-- Database
+Sia il server che la SPA vengono eseguite dal runtime [NodeJs](nodejs.org), il quale mi ha permesso di scrivere il programma usando diversi fantastici framework che descriverò in un secondo momento, caratterizzato inoltre da elevate prestazioni di esecuzione.
+
+Di fatto è una versione del motore V8 di Chromium che permette di far eseguire codice Javascript fuori da un browser.
+
+Come packet manager NodeJs usa npm. Per installare un package basta digitare nel terminale
+
+```bash
+npm i "nomedelpackage"
+```
+
+- Back-end
+- Front-end
+
+### Rest API e database
+
+<!-- ![serverless](images/serverless.jpeg) -->
+
+Avendo già in mente le funzionalità richieste al programma, si è deciso di realizzare per prima cosa il back-end, definendo subito i servizi funzionanti che verranno utilizzati dal modulo di front-end nella fase successiva. In un contesto reale normalmente le due parti del sofware verrebbero sviluppate contemporaneamente per garantire una maggiore velocità di risposta al cliente.
+
+Come paradigma di programmazione è stato scelto quello _serverless_, così come anche il provider cloud, AWS Lambda, che implementa lo stesso.
+
+> _serverless_ : la responsabilità della gestione dell' infrastruttura server viene affidata totalmente al provider, cosicchè il programmatore può occuparsi dell'applicazione, che viene eseguita e scalata automaticamente. Con questo metodo si riducono i costi, grazie all'eliminazione degli oneri di gestione ma soprattutto perchè le tariffe sono calcolate in base ai tempi di elaborazione del programma in esecuzione.
+
+Questo significa che l'applicazione viene suddivisa in tante funzioni, ciascuna delle quali corrispondente ad un URL e più precisamente ad una risorsa che il server dovrà restituire, elaborata dalla funzione stessa.
+
+AWS fornisce il servizio API Gateway, la quale si occupa sostanzialmente di ricevere le richieste dal client ed inoltrarle alla funzione desiderata, dopo eventuali controlli concernenti l'autenticazione o il dominio di provenienza, con grande vantaggio per la sicurezza e i costi, e di spedire la risposta.
+
+Quando una chiamata riesce a passare API Gateway, viene invocata e caricata in memoria una funzione lambda che si occuperà dell'elaborazione. Successivamente, la funzione può rimanere in cache fino a 5 minuti, per poi essere ibernata se non riceve più richieste.
+
+![api-folder](images/api-folder.png)
+
+_struttura della cartella_
+
+Il programma è strutturato in tre cartelle:
+
+1. functions: raccoglie le funzioni lambda vere e proprie
+1. lib: funzioni di supporto a quelle lambda
+1. models: schemi dei documenti del database
+
+Uno dei file più importanti del progetti è _serverless.yml_, il cui contenuto serve ad informare il framework [Serverless](serverless.com) riguardo a tutto ciò che gli serve per il deployment(provider, regione, runtime, funzioni etc.)
+
+```yml
+service: todo-webapp
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 128
+  region: eu-south-1
+```
+
+Serverless è un framework che permette scrivere un'applicazione secondo il paradigma serverless e si occupa di impacchettare il codice ed inviarlo al provider, permettendoci di fatto di scrivere il programma in locale, testarlo e pubblicarlo in automatico.
+
+```bash
+# avviare il web server locale
+sls offline start --skipCacheInvalidation
+
+#credenziali provider
+serverless config credentials --provider "il tuo provider" --key "latuakey" --secret "latuapassword"
+
+#deployment su cloud
+sls deploy
+```
+
+Nel file serverless.yml le varie funzioni si dichiarano con la seguente scrittura:
+
+```yml
+functions:
+  register:
+    handler: functions/register.handler
+    events:
+      - http:
+          path: api/register
+          method: post
+          cors: true
+```
+
+Dove:
+
+- register è il nome con cui verrà chiamata AWS Lambda
+- handler è la funzione corrispondente nel codice
+- events sono gli eventi che attivano la funzione, specificando l'url relativo, il metodo e l'attivazione di _cors_.
+
+> _cors_ : "Cross-Origin Resource Sharing", un header HTTP che specifica quali domini di origine di una richiesta hanno la possibilità di effettuare richieste. Senza abilitare il cors solo le pagine appartenenti allo stesso dominio possono effettuare richieste HTTP.

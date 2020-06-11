@@ -9,8 +9,10 @@
 - Analisi
 - Progettazione
 - Implementazione
-- Testing
+- Testing e Debugging
+- Deployment
 - Criticità e miglioramenti futuri
+- Software e servizi utilizzati
 
 ---
 
@@ -117,7 +119,7 @@ npm i "nomedelpackage"
 - Back-end
 - Front-end
 
-### Rest API e database
+### Backend
 
 <!-- ![serverless](images/serverless.jpeg) -->
 
@@ -266,3 +268,122 @@ await collection.save();
 //eliminare un oggetto Collection in base all'id
 await Collection.findByIdAndRemove(event.pathParameters.id);
 ```
+
+### Front-end
+
+<!-- ![react](images/react.png) -->
+
+Il front-end dell'applicazione, come descritto prima, consiste in una single-page-application. Tra gli UI framework basati su NodeJs è stato scelto React sia perché popolare(e quindi si può ottenere tanto aiuto dalla community) sia perchè già di mia conoscenza, permettendomi di risparmiare tempo.
+
+React tratta l'applicazione come un albero di componenti, ciascuna delle quali è una funzione/classe Javascript riutilizzabile che descrive sia il suo aspetto(mediante tag _JSX_), sia il suo comportamento nonché lo stato.
+
+Quando lo stato di un componente subisce un cambiamento, viene azionato un render solo del componente stesso, garantendo interattività e prestazioni.
+
+I vari componenti per dialogare di base sfruttano i props, cioè dati che vengono passati dal componente padre al componente figlio come parametri nel tag di creazione e che il figlio dichiara nella sua firma.
+
+> _JSX_ : estensione del linguaggio Javascript che incorpora il markup nella logica
+
+```html
+const element =
+<h1>Hello, world!</h1>
+;
+```
+
+La sintassi di base di un componente in React è la seguente:
+
+```javascript
+import React from "react";
+
+const App = () => {
+	//eventuali stati
+	//eventuali funzioni
+	return <div></div>;
+};
+```
+
+E necessita di un componente root per essere renderizzato:
+
+```javascript
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./App";
+
+ReactDOM.render(
+	<React.Fragment>
+		<App />
+	</React.Fragment>,
+	document.getElementById("root")
+);
+```
+
+Per avere un aspetto accattivante, è stato seguito il linguaggio di design di [Ant Design](https://ant.design/), la quale offre anche componenti per React
+
+<!-- ![react-folder](images/react-folder.png) -->
+
+- public, contenente i loghi e index.html che verrà popolato dal contenuto html derivato dalla compilazione del codice Javascript estrapolando i tag JSX.
+
+- src
+
+  - components, contenente le funzioni che verranno renderizzate su schermo
+
+  - contexts, funzioni speciali che hanno il compito di fornire dati e/o metodi ad altre funzioni. Sono richiesti quando si vogliono passare gli stessi dati a più componenti senza incorrere nel _props drilling_
+
+  <!-- ![props-drilling](images/props-drilling.png) -->
+
+  - res, immagini di sfondo
+
+<!-- ![login](images/login.png)
+![registration](images/registration.png)
+![homepage](images/homepage.png)
+![todopage](images/todopage.png) -->
+
+---
+
+## Testing
+
+Per effettuare i vari test occorsi durante lo sviluppo mi sono avvalso del web-server locale di NodeJs, richiamabile attraverso:
+
+```bash
+#back-end
+sls offline start --skipCacheInvalidation
+
+#front-end
+npm run start
+#(uno script dichiarato in package.json)
+```
+
+Per testare le funzionalità della Rest API in fase di sviluppo mi sono avvalso della utility gratuita [Postman](https://www.postman.com/) per simulare richieste HTTP comprendenti vari Header e Body.
+
+Quando al front-end, mi sono avvalso estensivamente di [Chrome Dev tools](https://developers.google.com/web/tools/chrome-devtools) incorporato nel browser per effettuare debugging di script Javascript e moduli CSS.
+
+Segnalo anche [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi), un'estensione per browser Chromium utile per monitorare gli stati dei componenti React.
+
+Un aiuto importante è stato dato dai feedback dei miei beta-tester, che mi hanno permesso di inquadrare meglio il punto di vista degli utenti e migliorare le parti della UI poco intuitive, facendomi notare anche alcune mancanze, contribuendo a rendere migliore la User Experience.
+
+---
+
+## Deployment
+
+- Rest API -> [AWS Lambda](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi)
+
+- SPA -> [Heroku](https://www.heroku.com/)
+
+- Database -> [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+
+Tutti e tre i cloud provider qui sopra prevedono piano gratuiti con limiti di utilizzo che ho sfruttato per realizzare il presente progetto.
+
+---
+
+## Criticità e miglioramenti futuri
+
+Il linguaggio di design utilizzato, Ant Design, è orientato principalmente verso la rappresentazione desktop, e ciò consegue che la UI prodotta è solo parzialmente responsive. Infatti l'utilizzo della app risulta poco sgradevole da dispositivo mobile.
+
+Esiste una versione di Ant Design, Ant Design mobile, progettato per gli schermi più piccoli ma ciò significa che bisogna sviluppare due versioni separate per la stessa app che io, per motivi di tempo, non ho potuto fare.
+
+Scegliere una libreria UI più responsive, come Material UI o Bootstrap avrebbe portato a maggiore flessibilità.
+
+Un altro miglioramento che si potrebbe apportare è l'introduzione di un logo, che per capacità tecniche non sono riuscito a realizzare con sufficiente soddisfazione.
+
+Oltretutto, le animazioni del sito sono piuttosto improvvisi, ed elementi di caricamento come gli skeleton o un sistema di animazione come Framer Motion avrebbero portato ad una User Experience più gradevole e professionale.
+
+Tutte le precedenti criticità mostrano come sia necessario e vantaggioso collaborare in un team si sviluppatori, possibilmente coadiuvati da personale con conoscenze di design.

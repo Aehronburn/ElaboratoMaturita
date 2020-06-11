@@ -1,18 +1,24 @@
-<!-- ![spesa](images/spesa.png) -->
+![spesa](images/spesa.png)
 
 # Elaborato esame di stato 2019/20
 
 > Zhu Yihui 5A Informatica
 
+> [Sito finale](https://todo-webapp-react.herokuapp.com/)
+
+> [Repository codice sorgente front-end](https://github.com/Aehronburn/todo-webapp)
+
+> [Repository codice sorgente back-end](https://github.com/Aehronburn/todo-webapp-api)
+
 # Progetto: **Todo**
 
-- Analisi
-- Progettazione
-- Implementazione
-- Testing e Debugging
-- Deployment
-- Criticità e miglioramenti futuri
-- Software e servizi utilizzati
+- [Analisi](##Analisi)
+- [Progettazione](##Progettazione)
+- [Implementazione](##Implementazione)
+- [Testing e Debugging](##testing-e-debugging)
+- [Deployment](##Deployment)
+- [Criticità e miglioramenti futuri](##criticità-e-miglioramenti-futuri)
+- [Software e servizi di sviluppo](##software-e-servizi-di-sviluppo)
 
 ---
 
@@ -36,21 +42,21 @@ La riservatezza delle informazioni è garantita da un sistema di autenticazione 
 
 ## Progettazione
 
-- Architettura generale
-- Struttura front-end, web server
-- Struttura back-end, application server
-- Database
-- User interface design
+- [Architettura generale](###architettura-generale)
+- [Struttura front-end, web server](###struttura-front-end,-web-server)
+- [Struttura back-end, application server](###struttura-back-end,-application-server)
+- [Database](###Database)
+- [User interface design](###user-interface-design)
 
-<!-- ![analisi](images/analisi.png) -->
+![analisi](images/analisi.png)
 
 ### Architettura generale
 
-L'architettura dell'applicazione è quella _client-server tier 3_,in cui il software viene scomposto in tre livelli o strati:
+L'architettura dell'applicazione è quella _client-server tier 3_, in cui il software viene scomposto in tre livelli o strati:
 
-1. Presentazione(interfaccia utente)
-1. Applicazione(funzionalità)
-1. Dati(database)
+1. Presentazione (interfaccia utente)
+1. Applicazione (funzionalità)
+1. Dati (database)
 
 Il vantaggio di questo schema è che la complessità della realizzazione e del debugging diminuisce, perchè il programma viene diviso in moduli più semplici.
 
@@ -58,9 +64,17 @@ Non solo, il singolo livello può essere aggiornato indipendentemente dagli altr
 
 Infine, quando ciascun livello viene ospitato su macchine hardware differenti duplicate, viene migliorata la disponibilità, perché il carico di lavoro viene distribuito su altri nodi in casi di fallimento di uno.
 
+I provider cloud che offrono servizi di hosting effettuano la cosiddetta _virtualizzazione_ nei loro server. La virtualizzazione consiste nel condividere la macchina fisica e le sue risorse con più sistemi operativi separati tra loro.
+
+Questo permette di aumentare l'efficienza delle infrastrutture, perché se in un server fisico risiedesse un solo server software quest'ultimo userebbe solo una piccola parte delle risorse. Ancora peggio se il servizio non viene invocato, la macchina fisica sarebbe letteralmente sprecata perché non lavora, occupando spazio.
+
+Un'altro vantaggio per gli utenti è che i provider possono offrire sistemi operativi differenti, adattandosi così alle necessità di una specifica applicazione. Inoltre, non essendo i server virtuali altro che dei file, le procedure di backup e disaster recovery sono semplici ed immediate.
+
+Quando è presente un hypervisor, un manager di tutti i server virtuali presenti nelle macchine fisiche, è possibile effettuare il cosiddetto _load balancing_, diminuire o aumentare l'allocazione di risorse dinamicamente a seconda del carico di lavoro
+
 ### Struttura front-end, web server
 
-<!-- ![spa](images/spa.png) -->
+![spa](images/spa.png)
 
 _Source: Digital Clarity Group_
 
@@ -70,7 +84,7 @@ Ciò le permette di non generare caricamenti della pagina quando si cambiano sch
 
 ### Struttura back-end, application server
 
-<!-- ![rest](images/rest.png) -->
+![rest](images/rest.png)
 
 Come servizio di back-end è stato scelto una Rest(Representational State Transfer) API, ovvero un API basata sul protocollo HTTP, quindi _stateless_, che associa ad un URL una risorsa(che viene restituita sottoforma di JSON o XML), che il richiedente del servizio deve richiedere inviando una richiesta HTTP specificandone la tipologia, GET POST DELETE etc.
 
@@ -78,13 +92,13 @@ Come servizio di back-end è stato scelto una Rest(Representational State Transf
 
 ### Database
 
-<!-- ![database](images/database.png); -->
+![database](images/database.png);
 
 Come base di dati per memorizzare l'elenco degli utenti e la lista delle faccende è stato deciso di usare il un DBMS NoSQL a documenti.
 
 NoSQL sta per Not Only SQL e indica un insieme di DBMS che non utilizzano né il linguaggio SQL né il modello relazionale, nati allo scopo di servire delle specifiche necessità che i rigidi schemi delle tabelle non possono soddisfare.
 
-Ci sono per esempio database _chiave/valore_, particolarmente veloce e adatto a servizi di messaggistica istantenea, _a grafo_, tipici dei social network, _in memoria_, per videogiochi online in quanto offrono tempi di latenza ridottissimi. In genere i DBMS NoSQL permettono la scalabilità orizzontale, cioè aggiungere nuovi nodi al gruppo di elaboratori(molto vantaggioso), contro la scalabilità verticale, ovvero potenziare il singolo elaboratore.
+Ci sono per esempio database _chiave/valore_, particolarmente veloci e adatti a servizi di messaggistica istantenea, _a grafo_, tipici dei social network, _in memoria_, per videogiochi online in quanto offrono tempi di latenza ridottissimi. In genere i DBMS NoSQL permettono la scalabilità orizzontale, cioè l'aggiunta di nuovi nodi al gruppo di elaboratori(molto vantaggioso), contro la scalabilità verticale, ovvero potenziare il singolo elaboratore.
 
 I database _a documenti_ memorizzano i dati sottoforma di documenti raccolti a loro volta in collezioni(le tabella dei RDBMS), l'equivalente del record nei database relazionali, di fatto oggetti JSON, caratterizzati da uno schema libero e mutabile, che possono essere messi in relazione o contenerne altri documenti.
 
@@ -92,11 +106,11 @@ Il motivo della scelta è dovuto alla semplicità di programmazione, in quanto u
 Lo schema non fisso inoltre garantisce flessibilità e scalabilità nel futuro.
 Infine, siccome i dati non sono normalizzati, le prestazioni sono migliori che nei RDBMS in quanto quest'ultimi normalmente necessitano di effettuare ed attendere l'operazione JOIN tra le tabelle per ottenere il risultato richiesto, a scapito di eventuali ridondanze.
 
-<!-- ![database-schema](images/database-schema.png) -->
+![database-schema](images/database-schema.png)
 
 ### User interface design
 
-<!-- ![uizard](images/uizard.png) -->
+![uizard](images/uizard.png)
 
 Si è iniziati con la progettazione dell'interfaccia utente disegnando i primi wireframe su carta, successivamente grazie a [uizard](https://uizard.io/) si è potuto prototipare una prima idea del progetto.
 
@@ -110,18 +124,18 @@ Sia il server che la SPA vengono eseguite dal runtime [NodeJs](nodejs.org), il q
 
 Di fatto è una versione del motore V8 di Chromium che permette di far eseguire codice Javascript fuori da un browser.
 
-Come packet manager NodeJs usa npm. Per installare un package basta digitare nel terminale
+Come package manager NodeJs usa npm. Per installare un package basta digitare nel terminale
 
 ```bash
-npm i "nomedelpackage"
+npm i nomedelpackage
 ```
 
-- Back-end
-- Front-end
+- [Back-end](###back-end)
+- [Front-end](###front-end)
 
-### Backend
+### Back-end
 
-<!-- ![serverless](images/serverless.jpeg) -->
+![serverless](images/serverless.jpeg)
 
 Avendo già in mente le funzionalità richieste al programma, si è deciso di realizzare per prima cosa il back-end, definendo subito i servizi funzionanti che verranno utilizzati dal modulo di front-end nella fase successiva. In un contesto reale normalmente le due parti del sofware verrebbero sviluppate contemporaneamente per garantire una maggiore velocità di risposta al cliente.
 
@@ -135,7 +149,7 @@ AWS fornisce il servizio API Gateway, la quale si occupa sostanzialmente di rice
 
 Quando una chiamata riesce a passare API Gateway, viene invocata e caricata in memoria una funzione lambda che si occuperà dell'elaborazione. Successivamente, la funzione può rimanere in cache fino a 5 minuti, per poi essere ibernata se non riceve più richieste.
 
-<!-- ![api-folder](images/api-folder.png) -->
+![api-folder](images/api-folder.png)
 
 _struttura della cartella_
 
@@ -269,9 +283,19 @@ await collection.save();
 await Collection.findByIdAndRemove(event.pathParameters.id);
 ```
 
+Cifrazione delle password:
+
+```javascript
+//creazione hash della password + salt(10) per maggiore sicurezza
+const hashedPassword = await bcrypt.hash(json.password, 10);
+```
+
+Innanzitutto viene creato un hash della password lungo 40 byte con l'algoritmo bcrypt, scegliendo come fattore di costo(complessità algoritmo) 10.
+Automaticamente bcrypt una stringa casuale, il sale, che serve principalmente a differenziare gli hash di password uguali e salvaguardare gli utenti in caso di attacchi a forza bruta. Il sale, essendo random, si rivela inoltre ottimo contro gli attacchi a rainbow table, in cui vengono confrontati gli hash rubati con una tabella di stringa già decriptate.
+
 ### Front-end
 
-<!-- ![react](images/react.png) -->
+![react](images/react.png)
 
 Il front-end dell'applicazione, come descritto prima, consiste in una single-page-application. Tra gli UI framework basati su NodeJs è stato scelto React sia perché popolare(e quindi si può ottenere tanto aiuto dalla community) sia perchè già di mia conoscenza, permettendomi di risparmiare tempo.
 
@@ -318,7 +342,7 @@ ReactDOM.render(
 
 Per avere un aspetto accattivante, è stato seguito il linguaggio di design di [Ant Design](https://ant.design/), la quale offre anche componenti per React
 
-<!-- ![react-folder](images/react-folder.png) -->
+![react-folder](images/react-folder.png)
 
 - public, contenente i loghi e index.html che verrà popolato dal contenuto html derivato dalla compilazione del codice Javascript estrapolando i tag JSX.
 
@@ -328,18 +352,20 @@ Per avere un aspetto accattivante, è stato seguito il linguaggio di design di [
 
   - contexts, funzioni speciali che hanno il compito di fornire dati e/o metodi ad altre funzioni. Sono richiesti quando si vogliono passare gli stessi dati a più componenti senza incorrere nel _props drilling_
 
-  <!-- ![props-drilling](images/props-drilling.png) -->
+  ![props-drilling](images/props-drilling.png)
 
   - res, immagini di sfondo
 
-<!-- ![login](images/login.png)
+![login](images/login.png)
 ![registration](images/registration.png)
 ![homepage](images/homepage.png)
-![todopage](images/todopage.png) -->
+![todopage](images/todopage.png)
+
+I cambiamenti di pagina sono gestiti dal componente _BrowserRouter_, la quale si occupa di nascondere componenti e renderizzare quelli giusti in base all'URL.
 
 ---
 
-## Testing
+## Testing e Debugging
 
 Per effettuare i vari test occorsi durante lo sviluppo mi sono avvalso del web-server locale di NodeJs, richiamabile attraverso:
 
@@ -354,7 +380,7 @@ npm run start
 
 Per testare le funzionalità della Rest API in fase di sviluppo mi sono avvalso della utility gratuita [Postman](https://www.postman.com/) per simulare richieste HTTP comprendenti vari Header e Body.
 
-Quando al front-end, mi sono avvalso estensivamente di [Chrome Dev tools](https://developers.google.com/web/tools/chrome-devtools) incorporato nel browser per effettuare debugging di script Javascript e moduli CSS.
+Quando al front-end, mi sono affidato estensivamente di [Chrome Dev tools](https://developers.google.com/web/tools/chrome-devtools) incorporato nel browser per effettuare debugging di script Javascript e moduli CSS.
 
 Segnalo anche [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi), un'estensione per browser Chromium utile per monitorare gli stati dei componenti React.
 
@@ -386,4 +412,12 @@ Un altro miglioramento che si potrebbe apportare è l'introduzione di un logo, c
 
 Oltretutto, le animazioni del sito sono piuttosto improvvisi, ed elementi di caricamento come gli skeleton o un sistema di animazione come Framer Motion avrebbero portato ad una User Experience più gradevole e professionale.
 
-Tutte le precedenti criticità mostrano come sia necessario e vantaggioso collaborare in un team si sviluppatori, possibilmente coadiuvati da personale con conoscenze di design.
+Tutte le precedenti criticità mostrano come sia necessario e vantaggioso collaborare in un team di sviluppatori, possibilmente coadiuvati da personale con conoscenze di design.
+
+---
+
+## Software e servizi di sviluppo
+
+- [VSCodium](https://vscodium.com/), code editor, con cui ho anche scritto questa relazione
+- [Cacoo](https://cacoo.com/), per il disegno diagrammi e schemi
+- [Postman](https://www.postman.com/), per testare API

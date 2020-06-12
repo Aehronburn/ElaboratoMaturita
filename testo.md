@@ -18,7 +18,6 @@
 - [Testing e Debugging](##testing-e-debugging)
 - [Deployment](##Deployment)
 - [Criticità e miglioramenti futuri](##criticità-e-miglioramenti-futuri)
-- [Software e servizi di sviluppo](##software-e-servizi-di-sviluppo)
 
 ---
 
@@ -86,6 +85,8 @@ Ciò le permette di non generare caricamenti della pagina quando si cambiano sch
 
 ![rest](images/rest.png)
 
+_Source: TheAbbie_
+
 Come servizio di back-end è stato scelto una Rest(Representational State Transfer) API, ovvero un API basata sul protocollo HTTP, quindi _stateless_, che associa ad un URL una risorsa(che viene restituita sottoforma di JSON o XML), che il richiedente del servizio deve richiedere inviando una richiesta HTTP specificandone la tipologia, GET POST DELETE etc.
 
 > _stateless_ : il server non crea sessioni, cioè non memorizza il contesto del client. Ciascuna richiesta deve quindi contenere tutte il necessario per il buon fine della chiamata.
@@ -93,6 +94,8 @@ Come servizio di back-end è stato scelto una Rest(Representational State Transf
 ### Database
 
 ![database](images/database.png);
+
+_Source: WP Epitome_
 
 Come base di dati per memorizzare l'elenco degli utenti e la lista delle faccende è stato deciso di usare il un DBMS NoSQL a documenti.
 
@@ -136,6 +139,8 @@ npm i nomedelpackage
 ### Back-end
 
 ![serverless](images/serverless.jpeg)
+
+_Source: codeburst_
 
 Avendo già in mente le funzionalità richieste al programma, si è deciso di realizzare per prima cosa il back-end, definendo subito i servizi funzionanti che verranno utilizzati dal modulo di front-end nella fase successiva. In un contesto reale normalmente le due parti del sofware verrebbero sviluppate contemporaneamente per garantire una maggiore velocità di risposta al cliente.
 
@@ -297,6 +302,8 @@ Automaticamente bcrypt una stringa casuale, il sale, che serve principalmente a 
 
 ![react](images/react.png)
 
+_Source: React_
+
 Il front-end dell'applicazione, come descritto prima, consiste in una single-page-application. Tra gli UI framework basati su NodeJs è stato scelto React sia perché popolare(e quindi si può ottenere tanto aiuto dalla community) sia perchè già di mia conoscenza, permettendomi di risparmiare tempo.
 
 React tratta l'applicazione come un albero di componenti, ciascuna delle quali è una funzione/classe Javascript riutilizzabile che descrive sia il suo aspetto(mediante tag _JSX_), sia il suo comportamento nonché lo stato.
@@ -353,6 +360,8 @@ Per avere un aspetto accattivante, è stato seguito il linguaggio di design di [
   - contexts, funzioni speciali che hanno il compito di fornire dati e/o metodi ad altre funzioni. Sono richiesti quando si vogliono passare gli stessi dati a più componenti senza incorrere nel _props drilling_
 
   ![props-drilling](images/props-drilling.png)
+
+  _Source: carlrippon_
 
   - res, immagini di sfondo
 
@@ -413,11 +422,3 @@ Un altro miglioramento che si potrebbe apportare è l'introduzione di un logo, c
 Oltretutto, le animazioni del sito sono piuttosto improvvisi, ed elementi di caricamento come gli skeleton o un sistema di animazione come Framer Motion avrebbero portato ad una User Experience più gradevole e professionale.
 
 Tutte le precedenti criticità mostrano come sia necessario e vantaggioso collaborare in un team di sviluppatori, possibilmente coadiuvati da personale con conoscenze di design.
-
----
-
-## Software e servizi di sviluppo
-
-- [VSCodium](https://vscodium.com/), code editor, con cui ho anche scritto questa relazione
-- [Cacoo](https://cacoo.com/), per il disegno diagrammi e schemi
-- [Postman](https://www.postman.com/), per testare API
